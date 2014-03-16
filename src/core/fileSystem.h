@@ -9,11 +9,21 @@
 using namespace std;
 
 #define MAX_OPENED_FILE 5
+#define ENTRY_SIZE 8
+#define MAX_ENTRY_NUM 8
 #define DISK_BLOCK_SIZE 64
 #define MAX_BLOCK_NUM 128
 #define BUFFER_SIZE 1024
 #define FILE_NAME_SIZE 3
 #define FILE_OTHER_ATTRIBUTE_SIZE 1
+#define MAX_FOLDER_SIZE 10
+#define RESOURCE_PATH "../resource"
+#define DISK_PATH "../resource/disk"
+#define ENTRY_NAME 3
+#define ENTRY_TYPE 2
+#define ENTRY_ATTRIBUTE 1
+#define ENTRY_NUMBER 1
+#define ENTRY_LENGTH 1
 
 typedef struct {
 	int d_num; // disk block num
@@ -43,8 +53,6 @@ typedef struct {
 	char length;
 }Entry;
 
-char disk[MAX_BLOCK_NUM * DISK_BLOCK_SIZE];
 char fat[MAX_BLOCK_NUM];
 char buffer[BUFFER_SIZE];
-char path[12];
 #endif
