@@ -1,7 +1,7 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
-extern void writeEntry(Entry *entry, Pointer *pointer);
+extern int writeEntry(Entry *entry, Pointer *pointer);
 extern int openDisk(fstream *disk_pointer);
 extern Entry * readEntry(Pointer *pointer);
 extern char * getFAT();
@@ -24,14 +24,14 @@ void initDisk() {
 
 void initIndex() {
 	char name[3][5] = {"rot\0","hom\0","bin\0"};
+	updateFAT(2, 0);
 	for (int i = 0; i < 3; i++){
 		Entry *entry = new Entry();
 		strcpy(entry -> name, name[i]);
-		strcpy(entry -> type, "  ");
+		strcpy(entry -> type, " \0");
 		entry -> number = i + 3;
-		updateFAT(i + 3, i + 4);
-		entry -> length = 0;
-		entry -> attribute = 0;
+		entry -> length = 8;
+		entry -> attribute = 1;
 		Pointer *pointer = new Pointer();
 		pointer -> d_num = 2;
 		pointer -> b_num = i * 8;
@@ -41,20 +41,37 @@ void initIndex() {
 		delete entry;
 		delete pointer;
 	}
+	updateFAT(2, -1);
+
+	Entry *entry = new Entry();
+	strcpy(entry -> name, "tes\0");
+	strcpy(entry -> type, " \0");
+	entry -> number = 7;
+	entry -> length = 8;
+	entry -> attribute = 1;
+	Pointer *pointer = new Pointer();
+	pointer -> d_num = 3;
+	pointer -> b_num = 0;
+	writeEntry(entry, pointer);
+	updateFAT(7, 8);
+	printf("write index: %s and size:%d\n", 
+		entry -> name, sizeof(entry -> name));
+	delete entry;
+	delete pointer;
 }
 
-void debug() {
+void printEntry(int d_num, int b_num) {
 	// read a entry for test
 	fstream *disk_pointer = new fstream();
 	disk_pointer -> seekg(DISK_BLOCK_SIZE * 2);
 	Pointer p;
-	p.d_num = 2;
-	p.b_num = 16;
+	p.d_num = d_num;
+	p.b_num = b_num;
 	Pointer *pointer = &p;
 	Entry *entry = readEntry(pointer);
 	char name[FILE_NAME_SIZE];
 	strcpy(name, entry -> name);
-    printf("%s\n", name);
+    printf("entry:%s and number:%d\n", name, entry -> number);
 	disk_pointer -> close();
 	delete disk_pointer;
 

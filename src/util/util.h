@@ -31,4 +31,10 @@ int compareName(char *a, char *b) {
 	return ret;
 }
 
+void myStrcpy(char *a, char *b, int len) {
+	for (int i = 0; i < len; i++) {
+		a[i] = b[i];
+	}
+}
+
 #endif

@@ -2,11 +2,13 @@
 #define __ENTRY_CPP__
 
 
-void writeEntry(Entry *entry, Pointer *pointer) {
+int writeEntry(Entry *entry, Pointer *pointer) {
+	char *fat = getFAT();
+	if (fat[pointer -> d_num]) return -1;
 	fstream *disk_pointer = new fstream();
 	if(openDisk(disk_pointer) <= 0) {
 		delete disk_pointer;
-		return;
+		return -1;
 	}
 	disk_pointer -> seekg(pointer -> d_num * DISK_BLOCK_SIZE + pointer -> b_num);
 	disk_pointer -> write((char *) &entry -> name, ENTRY_NAME);
@@ -16,6 +18,7 @@ void writeEntry(Entry *entry, Pointer *pointer) {
 	disk_pointer -> write((char *) &entry -> length, ENTRY_LENGTH);
 	disk_pointer -> close();
 	delete disk_pointer;
+	return 1;
 }
 
 

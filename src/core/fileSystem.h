@@ -55,4 +55,5 @@ typedef struct {
 
 char fat[MAX_BLOCK_NUM];
 char buffer[BUFFER_SIZE];
+Pointer *current_path;
 #endif
