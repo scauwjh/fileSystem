@@ -106,8 +106,8 @@ void updateFile(OFTLE *oftle) {
 }
 
 int main() {
-	// initDisk();
-	// initIndex();
+	initDisk();
+	initIndex();
 	strcpy(path, "/usr/tmp");
 
 	fstream disk_pointer("disk", ios::in | ios::out | ios::binary);
