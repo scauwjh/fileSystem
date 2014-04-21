@@ -1,0 +1,37 @@
+# depslib dependency file v1.0
+1397986717 source:d:\codes\codeblocks\filesystem\src\core\filesystem.cpp
+	"fileSystem.h"
+	"../util/util.h"
+
+1397984751 d:\codes\codeblocks\filesystem\src\core\filesystem.h
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<fstream>
+	"struct.h"
+	"../util/util.h"
+
+1395249634 d:\codes\codeblocks\filesystem\src\core\struct.h
+
+1397983950 d:\codes\codeblocks\filesystem\src\util\util.h
+	<iostream>
+	<fstream>
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+
+1397986237 source:d:\codes\codeblocks\filesystem\src\util\util.cpp
+	"util.h"
+
+1397982886 source:d:\codes\codeblocks\filesystem\src\core\entry.cpp
+	"fileSystem.h"
+
+1395310703 source:d:\codes\codeblocks\filesystem\src\core\fat.cpp
+	"fileSystem.h"
+
+1397983055 source:d:\codes\codeblocks\filesystem\main.cpp
+	"src/core/fileSystem.h"
+	"src/util/util.h"
+	"windows.h"
+

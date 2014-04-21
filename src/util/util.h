@@ -1,40 +1,40 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-char * getFileName(char *path) {
-	char *name = strtok(path, "/");
-	while (name) {
-		name = strtok(NULL, "/");
-	}
-	return name;
-}
+#define MAX_OPENED_FILE 5
+#define ENTRY_SIZE 8
+#define MAX_ENTRY_NUM 8
+#define DISK_BLOCK_SIZE 64
+#define MAX_BLOCK_NUM 128
+#define BUFFER_SIZE 1024
+#define FILE_NAME_SIZE 3
+#define FILE_OTHER_ATTRIBUTE_SIZE 1
+#define MAX_FOLDER_SIZE 10
+#define RESOURCE_PATH "resource"
+#define DISK_PATH "resource/disk"
+#define ENTRY_NAME 3
+#define ENTRY_TYPE 2
+#define ENTRY_ATTRIBUTE 1
+#define ENTRY_NUMBER 1
+#define ENTRY_LENGTH 1
 
-int openDisk(fstream *disk_pointer) {
-	disk_pointer -> open(DISK_PATH, ios::in | ios::out | ios::binary);
-	if (!*disk_pointer) {
-		cerr << "Read disk error!" << endl;
-		return -1;
-	}
-	return 1;
-}
+#include <iostream>
+#include <fstream>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+using namespace std;
 
-int compareName(char *a, char *b) {
-	int ret = 0, i;
-	for (i = 0; i < FILE_NAME_SIZE; i++) {
-		// printf("a[i]:%c b[i]:%c\n", a[i], b[i]);
-		if (ret) return ret;
-		if (!a[i] && b[i]) return -b[i];
-		if (!b[i] && a[i]) return a[i];
-		if (!a[i] && !b[i]) return ret;
-		ret = a[i] - b[i];
-	}
-	return ret;
-}
-
-void myStrcpy(char *a, char *b, int len) {
-	for (int i = 0; i < len; i++) {
-		a[i] = b[i];
-	}
-}
+class Util{
+public:
+    static string getFileName(char *path);
+    static string getParentPath(const char *path);
+    static int openDisk(fstream *disk_pointer);
+    static int compareName(char *a, char *b);
+    static void myStrcpy(char *a, char *b, int len);
+    static int getFolderCount(char *path);
+    static int startWith(const string &a, const string &b);
+    static int endWith(const string &a, const string &b);
+};
 
 #endif
