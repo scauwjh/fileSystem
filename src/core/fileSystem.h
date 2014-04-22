@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fstream>
+#include <Windows.h>
 #include "struct.h"
 #include "../util/util.h"
 using namespace std;
@@ -31,10 +32,13 @@ using namespace std;
 class fileSystem {
 public:
     fileSystem();
-	int mkdir(char *path);
+	int mkdir(char *path, int type);
 	int cd(const char *path);
 	void ls();
 	int rm(char *path);
+	int mkfile(char *path);
+	int edit(char *path);
+	int cat(char *path);
 	int setPosition(char *path);
 	int writeEntry(Entry *entry, Pointer *pointer);
 	int readEntry(Entry *entry, Pointer *pointer);
@@ -42,6 +46,9 @@ public:
 	void setCurretnPath(int d_num, int b_num);
 	int writeCheck(int d_num, int b_num);
 	int clearEntry(Pointer *pointer);
+	int writeFile(string content, int length, int start);
+	string readFile(int length, int start);
+	int clearDisk(int length, int start);
 //private:
     void updateFAT();
     int setFAT(int d_num, char next_num);

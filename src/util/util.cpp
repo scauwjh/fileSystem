@@ -17,14 +17,15 @@ string Util::getParentPath(const char *path) {
     string parentPath = startWith(path, "/") > 0 ? "/" : "";
     char cpy[1000];
     strcpy(cpy, path);
+    int folder_cnt = getFolderCount((char *)path);
+    int cnt = 1;
 	char *name = strtok(cpy, "/");
-	if(name) parentPath += name, parentPath += "/";
 	while (name) {
+        if(cnt++ > folder_cnt - 1) break;
+        parentPath += name;
+        parentPath += "/";
 		name = strtok(NULL, "/");
-		char *last = strtok(NULL, "/");
-		if (name && last) parentPath += name, parentPath += "/", parentPath += last, parentPath += "/";
 	}
-	cout << parentPath << endl;
 	return parentPath;
 }
 

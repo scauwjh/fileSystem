@@ -13,6 +13,31 @@ int fileSystem::writeEntry(Entry *entry, Pointer *pointer) {
 	return 1;
 }
 
+int fileSystem::writeFile(string content, int length, int start) {
+	fstream fs, *disk_pointer = &fs;
+	if (util.openDisk(disk_pointer) < 0) return -1;
+	disk_pointer -> seekg(start);
+	if (length == 0) {
+        disk_pointer -> close();
+        return 1;
+	}
+    disk_pointer -> write(content.c_str(), length+1);
+	disk_pointer -> close();
+	return 1;
+}
+
+string fileSystem::readFile(int length, int start) {
+	fstream fs, *disk_pointer = &fs;
+	char tmp[300];
+	string content;
+	if(util.openDisk(disk_pointer) < 0) return "";
+	disk_pointer -> seekg(start);
+	disk_pointer -> read(tmp, length+1);
+	disk_pointer -> close();
+	content = tmp;
+	return content;
+}
+
 
 int fileSystem::readEntry(Entry *entry, Pointer *pointer) {
 	fstream fs, *disk_pointer = &fs;
@@ -58,8 +83,20 @@ int fileSystem::clearEntry(Pointer *pointer) {
     fstream fs, *disk_pointer = &fs;
 	if(util.openDisk(disk_pointer) < 0) return -1;
 	disk_pointer -> seekg(pointer -> d_num * DISK_BLOCK_SIZE + pointer -> b_num);
-	char clear = NULL;
-	disk_pointer->write((char *) &clear, ENTRY_SIZE);
+	char clear = 0;
+	disk_pointer->write((char *) clear, ENTRY_SIZE);
+	disk_pointer->close();
+	return 1;
+}
+
+int fileSystem::clearDisk(int length, int start) {
+    fstream fs, *disk_pointer = &fs;
+	if(util.openDisk(disk_pointer) < 0) return -1;
+	char clear[length+1];
+	for (int i = 0; i < length+1; i++)
+        clear[i] = 0;
+    disk_pointer -> seekg(start);
+	disk_pointer->write((char *) clear, length);
 	disk_pointer->close();
 	return 1;
 }

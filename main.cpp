@@ -27,7 +27,7 @@ void initIndex() {
 		strcpy(entry -> type, " \0");
 		entry -> number = i + 3;
 		entry -> length = 8;
-		entry -> attribute = 1;
+		entry -> attribute = 0;
 		Pointer *pointer = new Pointer();
 		pointer -> d_num = 2;
 		pointer -> b_num = i * 8;
@@ -43,7 +43,7 @@ void initIndex() {
 	strcpy(entry -> type, " \0");
 	entry -> number = 6;
 	entry -> length = 8;
-	entry -> attribute = 1;
+	entry -> attribute = 0;
 	Pointer *pointer = new Pointer();
 	pointer -> d_num = 3;
 	pointer -> b_num = 0;
@@ -98,12 +98,12 @@ void test() {
     fs.cd(path2);
     fs.ls();
     char mk[] = "/rot/wjh/t2";
-    fs.mkdir(mk);
+    fs.mkdir(mk, 0);
     fs.ls();
 }
 
-int main() {
-    //test();
+void run() {
+    test();
     fileSystem fs;
     char comment[100];
     char current_point[10];
@@ -130,7 +130,7 @@ int main() {
             }
             else if (!strcmp(com, "mkdir\0")) {
                 com = strtok(NULL, " ");
-                if (fs.mkdir(com) < 0) puts("failed to mkdir");
+                if (fs.mkdir(com, 0) < 0) puts("failed to mkdir");
                 break;
             }
             else if (!strcmp(com, "rm\0")) {
@@ -138,14 +138,36 @@ int main() {
                 if (fs.rm(com) < 0) puts("no such directory");
                 break;
             }
+            else if (!strcmp(com, "mkfile\0")) {
+                com = strtok(NULL, " ");
+                if (fs.mkfile(com) < 0) puts("failed to mkfile");
+                break;
+            }
+            else if (!strcmp(com, "edit\0")) {
+                com = strtok(NULL, " ");
+                if (fs.edit(com) < 0) puts("failed to edit");
+                break;
+            }
+            else if (!strcmp(com, "cat\0")) {
+                com = strtok(NULL, " ");
+                if (fs.cat(com) < 0) puts("failed to cat");
+                break;
+            }
             else if(!strcmp(com, "showfat\0")) {
                 for (int i = 0; i < 128; i++)
                 printf("%d ", fs.fat[i]);
+            }
+            else if(!strcmp(com, "showpath\0")) {
+                cout<< fs.current_path << endl;
             }
             // printf("%s\n", com);
             com = strtok(NULL, com);
         }
     }
+}
 
+
+int main() {
+    run();
     return 0;
 }

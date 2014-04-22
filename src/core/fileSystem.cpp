@@ -14,7 +14,7 @@ void fileSystem::setCurretnPath(int d_num, int b_num) {
     this->current_point.b_num = b_num;
 }
 
-int fileSystem::mkdir(char *path) {
+int fileSystem::mkdir(char *path, int type) {
     const char *name = util.getFileName(path).c_str();
     int cnt = util.getFolderCount(path);
 //    printf("%d %s\n", cnt, name);
@@ -40,8 +40,8 @@ int fileSystem::mkdir(char *path) {
             Entry entry;
             strcpy(entry.name, name);
             strcpy(entry.type, " \0");
-            entry.length = 8;
-            entry.attribute = 1;
+            entry.length = 0;
+            entry.attribute = type;
             int flag = 0;
             entry.number = i;
             Pointer pointer;
@@ -51,7 +51,9 @@ int fileSystem::mkdir(char *path) {
             this -> current_point = pre;
             // printf("mkdir at %d block %d byte\n", current_point.d_num, j * 8);
             setFAT(current_point.d_num, -1);
-            return 1;
+            if(type == 1)
+                setFAT(i, -1);
+            return i;
         }
     }
     this -> current_point = pre;
@@ -85,7 +87,6 @@ int fileSystem::setPosition(char *path) {
 int fileSystem::cd(const char *path) {
     if(!strcmp(path, "..")) {
         current_path = util.getParentPath(current_path.c_str());
-        cout << current_path << endl;
         return cd(current_path.c_str());
     }
     if (!strcmp(path, "/")) {
@@ -107,6 +108,7 @@ int fileSystem::cd(const char *path) {
         //cout << cnt << endl;
         if(cnt <= 3) {
             current_path += path;
+            current_path += "/";
             current_folder = path;
         }
         else {
@@ -124,10 +126,22 @@ void fileSystem::ls() {
     Entry e, *entry = &e;
     Pointer p, *pointer = &p;
     pointer -> d_num = current_point.d_num;
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    WORD wOldColorAttrs;
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+
+    // Save the current color
+    GetConsoleScreenBufferInfo(h, &csbiInfo);
+    wOldColorAttrs = csbiInfo.wAttributes;
     for (int i = 0; i < MAX_ENTRY_NUM; i++) {
-        pointer -> b_num = i * 8;
+        pointer -> b_num = i * ENTRY_SIZE;
         if (readEntry(entry, pointer) < 0) continue;
+        // Set the new color
+        if(entry->attribute == 1)
+            SetConsoleTextAttribute(h, FOREGROUND_RED | FOREGROUND_INTENSITY);
         printf("%s ", entry -> name);
+        // Restore the original color
+        SetConsoleTextAttribute(h, wOldColorAttrs);
     }
     puts("");
 }
@@ -154,4 +168,104 @@ int fileSystem::rm(char *path) {
     }
     current_point = prev_path;
     return 0;
+}
+
+int fileSystem::mkfile(char *path) {
+    return mkdir(path, 1);
+
+//    string file_name = util.getFileName(path);
+//    string parent_path = util.getParentPath(path);
+//    if(parent_path == "")
+//    cout << file_name << ":" << parent_path << endl;
+//    Pointer prev_point = this->current_point;
+//    setPosition(parent_path);
+//    Entry file, *f = &file;
+//    f->attribute = 1;
+//    f->length = 0;
+//    strcpy(f->name, file_name);
+//    strcpy(f->type, " \0");
+//    setFAT(current_point.d_num, -1);
+}
+
+int fileSystem::edit(char *path) {
+    string file_name = util.getFileName(path);
+    string parent_path = util.getParentPath(path);
+    Pointer prev_point = this->current_point;
+    if(parent_path != ""){
+        setPosition((char *)parent_path.c_str());
+    }
+    Entry entry, *e = &entry;
+    Pointer *p = &this->current_point;
+    int flag = 0;
+    for (int i = 0; i < MAX_ENTRY_NUM; i++) {
+        p->b_num = i * ENTRY_SIZE;
+        readEntry(e, p);
+        e->name[ENTRY_NAME] = '\0';
+        if (!strcmp(e->name, file_name.c_str())) {
+            setFAT(current_point.d_num, -1);
+            fstream buf;
+            string content;
+            if (e->length > 0) {
+                content = readFile(e->length, e->number * DISK_BLOCK_SIZE);
+                buf.open("resource/buffer", ios::in | ios::out | ios::binary);
+                buf.write(content.c_str(), e->length);
+                buf.close();
+            }
+            string com = "notepad resource/buffer";
+            system(com.c_str());
+            buf.open("resource/buffer", ios::in | ios::out | ios::binary);
+            char ch;
+            content = "";
+            while(buf.peek() != EOF) {
+                buf.read((char *) &ch, sizeof(ch));
+                content += ch;
+            }
+            buf.close();
+            buf.open("resource/buffer", ios::out | ios_base::trunc);
+            buf.close();
+            char *tmp = (char *)content.c_str();
+            int cnt = 0;
+            while(*tmp++) {
+                cnt ++;
+            }
+            int start = e->number * DISK_BLOCK_SIZE;
+            int length = (int)e->length;
+            clearDisk(length, start);
+            e->length = cnt;
+            writeEntry(e, p);
+            writeFile(content, cnt, start);
+            //cout << readFile(cnt, start) << endl;
+            flag = 1;
+            break;
+        }
+    }
+    this->current_point = prev_point;
+    return flag;
+}
+
+int fileSystem::cat(char *path) {
+    string file_name = util.getFileName(path);
+    string parent_path = util.getParentPath(path);
+    Pointer prev_point = this->current_point;
+    if(parent_path != ""){
+        setPosition((char *)parent_path.c_str());
+    }
+    Entry entry, *e = &entry;
+    Pointer *p = &this->current_point;
+    int flag = 0;
+    for (int i = 0; i < MAX_ENTRY_NUM; i++) {
+        p->b_num = i * ENTRY_SIZE;
+        readEntry(e, p);
+        e->name[ENTRY_NAME] = '\0';
+        if (!strcmp(e->name, file_name.c_str()) && e->attribute == 1) {
+            int length = e->length;
+            int start = e->number * DISK_BLOCK_SIZE;
+            string content = readFile(length, start);
+            cout << content << endl;
+            flag = 1;
+            break;
+        }
+    }
+    this->current_point = prev_point;
+    return flag;
 }

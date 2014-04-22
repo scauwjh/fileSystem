@@ -35,3 +35,40 @@
 	"src/util/util.h"
 	"windows.h"
 
+1398071125 source:e:\codes\c&c++\filesystem\main.cpp
+	"src/core/fileSystem.h"
+	"src/util/util.h"
+	"windows.h"
+
+1398068773 e:\codes\c&c++\filesystem\src\core\filesystem.h
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<fstream>
+	<Windows.h>
+	"struct.h"
+	"../util/util.h"
+
+1398054909 e:\codes\c&c++\filesystem\src\core\struct.h
+
+1398054909 e:\codes\c&c++\filesystem\src\util\util.h
+	<iostream>
+	<fstream>
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+
+1398071015 source:e:\codes\c&c++\filesystem\src\core\entry.cpp
+	"fileSystem.h"
+
+1398054909 source:e:\codes\c&c++\filesystem\src\core\fat.cpp
+	"fileSystem.h"
+
+1398071764 source:e:\codes\c&c++\filesystem\src\core\filesystem.cpp
+	"fileSystem.h"
+	"../util/util.h"
+
+1398057808 source:e:\codes\c&c++\filesystem\src\util\util.cpp
+	"util.h"
+
