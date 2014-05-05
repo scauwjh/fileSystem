@@ -83,7 +83,9 @@ int fileSystem::clearEntry(Pointer *pointer) {
     fstream fs, *disk_pointer = &fs;
 	if(util.openDisk(disk_pointer) < 0) return -1;
 	disk_pointer -> seekg(pointer -> d_num * DISK_BLOCK_SIZE + pointer -> b_num);
-	char clear = 0;
+	char clear[8];
+	for (int i = 0; i < 8; i++)
+        clear[i] = 0;
 	disk_pointer->write((char *) clear, ENTRY_SIZE);
 	disk_pointer->close();
 	return 1;

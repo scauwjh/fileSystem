@@ -103,7 +103,7 @@ void test() {
 }
 
 void run() {
-    test();
+    //test();
     fileSystem fs;
     char comment[100];
     char current_point[10];

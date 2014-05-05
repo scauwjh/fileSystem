@@ -33,6 +33,13 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="main.cpp" />
+		<Unit filename="src/core/entry.cpp" />
+		<Unit filename="src/core/fat.cpp" />
+		<Unit filename="src/core/fileSystem.cpp" />
+		<Unit filename="src/core/fileSystem.h" />
+		<Unit filename="src/core/struct.h" />
+		<Unit filename="src/util/util.cpp" />
+		<Unit filename="src/util/util.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
