@@ -1,4 +1,4 @@
 fileSystem
 ==========
 
-For curriculum design
+For OS curriculum design
